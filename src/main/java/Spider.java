@@ -10,7 +10,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by yilunq on 24/06/17.
@@ -36,7 +38,7 @@ public class Spider {
 
             TagNode node = htmlCleaner.clean(in);
 
-            List<String> lastNames = getLastNames(node);
+            Set<String> lastNames = getLastNames(node);
 
             for (String name : lastNames) {
                 System.out.println(name);
@@ -59,9 +61,9 @@ public class Spider {
         return result;
     }
 
-    private List<String> getLastNames(TagNode node) {
-        List<String> lst = new ArrayList<>();
-        for (int i = 0; i < 100; i++) { // Total has 100 common last names
+    private Set<String> getLastNames(TagNode node) {
+        Set<String> lst = new HashSet<>();
+        for (int i = 0; i < 354; i++) { // Total has 100 common last names
             for (int j = 4; j < 6; j++) { // According to the Wiki, column 4 or 5 are the last name
                 try {
                     String lastNameTemplate_XPATH = "//*[@id=\"mw-content-text\"]/div/table[2]/tbody/tr[" + i + "]/td[" + j + "]/a";
@@ -73,7 +75,9 @@ public class Spider {
                         String normalizedString = normalizeString(tg.getText().toString());
                         if (!isChineseCharacter(normalizedString)) {
                         // ----------------------------------
-                            lst.add(normalizedString);
+                            if (isLetters(normalizedString)) {
+                                lst.add(normalizedString);
+                            }
                         }
                     }
                 } catch (XPatherException xPath_e) {
@@ -94,5 +98,14 @@ public class Spider {
         return unknown.codePoints().anyMatch(
                 codepoint ->
                         Character.UnicodeScript.of(codepoint) == Character.UnicodeScript.HAN);
+    }
+
+    private boolean isLetters(String unknown) {
+        for (char c : unknown.toCharArray()) {
+            if (!Character.isLetter(c)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
