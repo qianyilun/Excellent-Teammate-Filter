@@ -9,21 +9,20 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
  * Created by yilunq on 24/06/17.
  */
-public class Spider {
+public class CommonLastNameGetter {
     public static void main(String[] args) {
         String addr = "https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames";
-        Spider d = new Spider();
+        CommonLastNameGetter d = new CommonLastNameGetter();
         System.out.println(d.httpGet(addr));
     }
 
+    // Open and maintain connection with GET
     private String httpGet(String addr) {
         URL url;
         URLConnection conn;
@@ -38,12 +37,10 @@ public class Spider {
 
             TagNode node = htmlCleaner.clean(in);
 
-            Set<String> lastNames = getLastNames(node);
-
+            Set<String> lastNames = getLastNamesList(node);
             for (String name : lastNames) {
                 System.out.println(name);
             }
-
         } catch (MalformedURLException e1) {
             System.out.println("Wrong URL");
             e1.printStackTrace();
@@ -61,20 +58,22 @@ public class Spider {
         return result;
     }
 
-    private Set<String> getLastNames(TagNode node) {
+    // Get name lists from Wikipedia
+    private Set<String> getLastNamesList(TagNode node) {
         Set<String> lst = new HashSet<>();
+        // ----- hard code section begin -----
         for (int i = 0; i < 354; i++) { // Total has 100 common last names
             for (int j = 4; j < 6; j++) { // According to the Wiki, column 4 or 5 are the last name
+            // ---- section end -----
                 try {
                     String lastNameTemplate_XPATH = "//*[@id=\"mw-content-text\"]/div/table[2]/tbody/tr[" + i + "]/td[" + j + "]/a";
                     Object[] evaluations = node.evaluateXPath(lastNameTemplate_XPATH);
                     if (!(evaluations == null || evaluations.length < 1)) {
                         TagNode tg = (TagNode)evaluations[0];
-                        // ----------------------------------
+
                         // https://stackoverflow.com/questions/3322152/is-there-a-way-to-get-rid-of-accents-and-convert-a-whole-string-to-regular-lette
                         String normalizedString = normalizeString(tg.getText().toString());
                         if (!isChineseCharacter(normalizedString)) {
-                        // ----------------------------------
                             if (isLetters(normalizedString)) {
                                 lst.add(normalizedString);
                             }
