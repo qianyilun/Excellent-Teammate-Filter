@@ -16,18 +16,14 @@ import java.util.Set;
  * Created by yilunq on 24/06/17.
  */
 public class CommonLastNameList {
-    public static void main(String[] args) {
-        String addr = "https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames";
-        CommonLastNameList d = new CommonLastNameList();
-        d.httpGet(addr);
-//        System.out.println(d.httpGet(addr));
-
-    }
-
-    private Set<String> lastNames;
+    private Set<String> lastNames = new HashSet<>();
 
     private void addLastName(String s) {
         lastNames.add(s);
+    }
+
+    public CommonLastNameList (String addr) {
+        this.httpGet(addr);
     }
 
     public Set<String> getLastNames() {
@@ -39,7 +35,6 @@ public class CommonLastNameList {
         URL url;
         URLConnection conn;
         BufferedReader in = null;
-        String result = "";
         HtmlCleaner htmlCleaner = new HtmlCleaner();
         try {
             url = new URL(addr);
@@ -50,10 +45,6 @@ public class CommonLastNameList {
             TagNode node = htmlCleaner.clean(in);
 
             lastNames = getLastNamesList(node);
-            for (String name : lastNames) {
-                System.out.println(name);
-            }
-            System.out.println(lastNames.size());
         } catch (MalformedURLException e1) {
             System.out.println("Wrong URL");
             e1.printStackTrace();
@@ -68,7 +59,6 @@ public class CommonLastNameList {
                 e.printStackTrace();
             }
         }
-//        return result;
     }
 
     // Get name lists from Wikipedia

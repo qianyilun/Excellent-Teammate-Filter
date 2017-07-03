@@ -23,11 +23,15 @@ public class DHL_nameList {
     }
 
     private List<String> lst = new ArrayList<>();
+    private int dhl_number;
 
     public Map<String, List<String>> getHash() {
         return hash;
     }
 
+    public int getDhl_number() {
+        return dhl_number;
+    }
 
     private Map<String, List<String>> hash = new HashMap<>();
 
@@ -39,13 +43,13 @@ public class DHL_nameList {
         return lst;
     }
 
-    private void openConnection(String addr) {
+    public void openConnection(String addr) {
         try {
             // Open jsoup connection
             Document doc = Jsoup.connect(addr).get();
 
             // Make selection
-            for (int i = 0; i < 18 ; i +=2) {
+            for (int i = 1; i <= 8 ; i++) {
                 makeSelection(doc, ""+i);
             }
         } catch (IOException e) {
@@ -60,6 +64,7 @@ public class DHL_nameList {
 
         for (Element element : li) {
             String name = element.ownText();
+            dhl_number++;
             categoryNames(name);
         }
     }
