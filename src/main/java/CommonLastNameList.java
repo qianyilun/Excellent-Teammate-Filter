@@ -19,11 +19,23 @@ public class CommonLastNameList {
     public static void main(String[] args) {
         String addr = "https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames";
         CommonLastNameList d = new CommonLastNameList();
-        System.out.println(d.httpGet(addr));
+        d.httpGet(addr);
+//        System.out.println(d.httpGet(addr));
+
+    }
+
+    private Set<String> lastNames;
+
+    private void addLastName(String s) {
+        lastNames.add(s);
+    }
+
+    public Set<String> getLastNames() {
+        return lastNames;
     }
 
     // Open and maintain connection with GET
-    private String httpGet(String addr) {
+    private void httpGet(String addr) {
         URL url;
         URLConnection conn;
         BufferedReader in = null;
@@ -37,10 +49,11 @@ public class CommonLastNameList {
 
             TagNode node = htmlCleaner.clean(in);
 
-            Set<String> lastNames = getLastNamesList(node);
+            lastNames = getLastNamesList(node);
             for (String name : lastNames) {
                 System.out.println(name);
             }
+            System.out.println(lastNames.size());
         } catch (MalformedURLException e1) {
             System.out.println("Wrong URL");
             e1.printStackTrace();
@@ -55,7 +68,7 @@ public class CommonLastNameList {
                 e.printStackTrace();
             }
         }
-        return result;
+//        return result;
     }
 
     // Get name lists from Wikipedia

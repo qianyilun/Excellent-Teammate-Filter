@@ -5,7 +5,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by allen on 02/07/17.
@@ -17,13 +19,17 @@ public class DHL_nameList {
         DHL_nameList dhl = new DHL_nameList();
         dhl.openConnection(addr);
 
-        System.out.println("Totally has " + dhl.getFullNameList().size() + " students, they are: ");
-        for (String s : dhl.getFullNameList()) {
-            System.out.println(s);
-        }
+        System.out.println(dhl.getHash());
     }
 
     private List<String> lst = new ArrayList<>();
+
+    public Map<String, List<String>> getHash() {
+        return hash;
+    }
+
+
+    private Map<String, List<String>> hash = new HashMap<>();
 
     public void addNames(String names) {
         lst.add(names);
@@ -33,10 +39,9 @@ public class DHL_nameList {
         return lst;
     }
 
-    // Open connection
     private void openConnection(String addr) {
         try {
-            // Open connection
+            // Open jsoup connection
             Document doc = Jsoup.connect(addr).get();
 
             // Make selection
@@ -55,7 +60,20 @@ public class DHL_nameList {
 
         for (Element element : li) {
             String name = element.ownText();
-            this.addNames(name);
+            categoryNames(name);
+        }
+    }
+
+    private void categoryNames(String fullName) {
+        String[] name = fullName.split(", ");
+        String lastName = name[0];
+        List<String> names = new ArrayList<>();
+
+        if (hash.containsKey(lastName)) {
+            hash.get(lastName).add(fullName);
+        } else {
+            names.add(fullName);
+            hash.put(lastName, names);
         }
     }
 }
