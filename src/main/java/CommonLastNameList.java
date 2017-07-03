@@ -15,10 +15,10 @@ import java.util.Set;
 /**
  * Created by yilunq on 24/06/17.
  */
-public class CommonLastNameGetter {
+public class CommonLastNameList {
     public static void main(String[] args) {
         String addr = "https://en.wikipedia.org/wiki/List_of_common_Chinese_surnames";
-        CommonLastNameGetter d = new CommonLastNameGetter();
+        CommonLastNameList d = new CommonLastNameList();
         System.out.println(d.httpGet(addr));
     }
 
